@@ -53,10 +53,10 @@ public enum  FileUtil {
      * 把list中的数据写入到文件中
      * @param list
      */
-    public void writeToFile(List<String> list,String path) {
+    public void writeToFile(List<String> list,String path,boolean append) {
         BufferedWriter bw = null;
         try{
-            bw = new BufferedWriter(new FileWriter(new File((path))));
+            bw = new BufferedWriter(new FileWriter(new File(path),append));
             int i = 0;
             StringBuilder sb = null;
             while (i < list.size()){
@@ -65,6 +65,28 @@ public enum  FileUtil {
                 bw.write(sb.toString());
                 i++;
             }
+        } catch (IOException e) {
+            logger.error("I/O error",e);
+        } finally {
+            try {
+                if(bw != null){
+                    bw.close();
+                }
+            } catch (IOException e) {
+                logger.error("close BufferedWrite error",e);
+            }
+        }
+    }
+
+    /**
+     * 把list中的数据写入到文件中
+     * @param str
+     */
+    public void writeStrToFile(String str,String path,boolean append) {
+        BufferedWriter bw = null;
+        try{
+            bw = new BufferedWriter(new FileWriter(new File(path),append));
+            bw.write(str);
         } catch (IOException e) {
             logger.error("I/O error",e);
         } finally {

@@ -44,8 +44,9 @@ public class GenerateTestData {
                 nameList.add(name);
             }
         }
-        fileUtil.writeToFile(nameList, "/Users/xiuc/Documents/work/xiuc/tiny/main/net/xiuc/data/name");
+        fileUtil.writeToFile(nameList, "/Users/xiuc/Documents/work/xiuc/tiny/main/net/xiuc/data/name",false);
         logger.info("生成名字成功");
 
     }
+    
 }
