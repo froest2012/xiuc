@@ -4,8 +4,9 @@ import java.util.Scanner;
 
 /**
  * Poj3628
- * 01背包...不加常数优化的代码能过,加了常数优化居然过不了了..
- * 我也是醉了
+ * 01背包...
+ * 常数优化只能在求背包最大价值的时候使用
+ * 所以此题转化为求背包最大价值
  * Created by 秀川 on 16/3/4.
  */
 public class Poj3628 {
@@ -20,21 +21,15 @@ public class Poj3628 {
                 cost[i] = in.nextInt();
                 sum += cost[i];
             }
-            int v = sum;
+            int v = sum - b;
             int[] f = new int[v + 1];
-            int costLen = cost.length;
-            for (int i = 1; i < costLen; i++) {
-                for (int j = v; j >= cost[i]; j--) {
+            for (int i = 1; i <= n; i++) {
+                for (int j = v; j >= Math.max(cost[i],v - sum); j--) {
                     f[j] = Math.max(f[j], f[j - cost[i]] + cost[i]);
                 }
+                sum -= cost[i];
             }
-            int min = 999999999;
-            for (int i = 0; i <= v; i++) {
-                if(f[i] >= b) {
-                    min = Math.min(min, f[i] - b);
-                }
-            }
-            System.out.println(min);
+            System.out.println(v - f[v]);
         }
     }
 }

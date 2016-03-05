@@ -14,24 +14,21 @@ public class Poj3624 {
         while (in.hasNext()) {
             int n = in.nextInt();
             int m = in.nextInt();
-            int[] cost = new int[n];
-            int[] weight = new int[n];
-            for(int i = 0; i < n; i++){
+            int[] cost = new int[n + 1];
+            int[] weight = new int[n + 1];
+            int sum = 0;
+            for(int i = 1; i <= n; i++){
                 cost[i] = in.nextInt();
                 weight[i] = in.nextInt();
+                sum += cost[i];
             }
             int v = m;
             int[] f = new int[v + 1];
-            int costLen = cost.length;
-            for (int i = 0; i < costLen; i++) {
-                int sum = 0;
-                for (int k = i; k < costLen; k++) {
-                    sum += cost[k];
-                }
-                int b = Math.max(v - sum, cost[i]);
-                for (int j = v; j >= b; j--) {
+            for (int i = 1; i <= n; i++) {
+                for (int j = v; j >= Math.max(v - sum, cost[i]); j--) {
                     f[j] = Math.max(f[j], f[j - cost[i]] + weight[i]);
                 }
+                sum -= cost[i];
             }
             System.out.println(f[v]);
         }
