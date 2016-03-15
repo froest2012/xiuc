@@ -1,5 +1,7 @@
 package net.xiuc.lib;
 
+import com.google.common.collect.Lists;
+
 import java.util.List;
 
 /**
@@ -26,26 +28,31 @@ public class Pack01 {
         return f[v];
     }
 
-    /**
-     * 打印01背包路径
-     * print(f, cost, weight, cost.length - 1, v, result); 如果cost从第一个开始存储,
-     * 那么打印就从cost.length - 1开始
-     * @param f         最大值数组
-     * @param cost      物品集合
-     * @param weight    价值集合
-     * @param i         第i个物品
-     * @param j         价值为j
-     * @param result    存储01背包路径,物品数组的索引,可以根据这个索引获取到相应的物品
-     */
-    private static void print(int[] f, int[] cost, int[] weight, int i, int j, List<Integer> result){
-        if(j - cost[i] < 0){
+    private static int pack011(int[] cost, int[] weight, int v, int sum){
+        int[][] f = new int[cost.length][v + 1];
+        for(int i = 1; i < cost.length; i++){
+            for(int j = v; j >= Math.max(f[i][j],f[i - 1][j - cost[i]] + weight[i]); j--){
+                f[i][j] = Math.max(f[i][j], f[i - 1][j - cost[i]] + weight[i]);
+            }
+            sum -= cost[i];
+        }
+        List<Integer> result = Lists.newArrayList();
+        print011(f, cost, weight, cost.length - 1, v, result);
+        for(Integer choose : result){
+            System.out.print(choose + ",");
+        }
+        return f[cost.length - 1][v];
+    }
+
+    private static void print011(int[][] f, int[] cost, int[] weight, int i, int j, List<Integer> result){
+        if(i < 1 || j < cost[i]){
             return;
         }
-        if(f[j] == f[j - cost[i]] + weight[i]){
+        if(f[i][j] == f[i - 1][j - cost[i]] + weight[i]){
             result.add(i);
-            print(f, cost, weight, i, j - cost[i], result);
+            print011(f, cost, weight, i - 1, j - cost[i], result);
         }else {
-            print(f, cost, weight, i - 1, j, result);
+            print011(f, cost, weight, i - 1, j, result);
         }
     }
 }

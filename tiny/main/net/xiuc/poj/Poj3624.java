@@ -1,6 +1,9 @@
 package net.xiuc.poj;
 
 
+import com.google.common.collect.Lists;
+
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -22,7 +25,8 @@ public class Poj3624 {
                 weight[i] = in.nextInt();
                 sum += cost[i];
             }
-            System.out.println(pack01(cost,weight,m,sum));
+//            System.out.println(pack01(cost,weight,m,sum));
+            System.out.println(pack011(cost,weight,m,sum));
         }
     }
 
@@ -45,4 +49,32 @@ public class Poj3624 {
         return f[v];
     }
 
+    //TODO
+    private static int pack011(int[] cost, int[] weight, int v, int sum){
+        int[][] f = new int[cost.length][v + 1];
+        for(int i = 1; i < cost.length; i++){
+            for(int j = v; j >= Math.max(cost[i], v - sum); j--){
+                f[i][j] = Math.max(f[i - 1][j], f[i - 1][j - cost[i]] + weight[i]);
+            }
+            sum -= cost[i];
+        }
+        List<Integer> result = Lists.newArrayList();
+        print011(f, cost, weight, cost.length - 1, v, result);
+        for(Integer choose : result){
+            System.out.print(choose + ",");
+        }
+        return f[cost.length - 1][v];
+    }
+
+    private static void print011(int[][] f, int[] cost, int[] weight, int i, int j, List<Integer> result){
+        if(i < 1 || j < cost[i]){
+            return;
+        }
+        if(f[i][j] == f[i - 1][j - cost[i]] + weight[i]){
+            result.add(i);
+            print011(f, cost, weight, i - 1, j - cost[i], result);
+        }else {
+            print011(f, cost, weight, i - 1, j, result);
+        }
+    }
 }
