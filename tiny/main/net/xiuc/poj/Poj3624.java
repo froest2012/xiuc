@@ -25,8 +25,16 @@ public class Poj3624 {
                 weight[i] = in.nextInt();
                 sum += cost[i];
             }
-//            System.out.println(pack01(cost,weight,m,sum));
-            System.out.println(pack011(cost,weight,m));
+//            int[] f = new int[m + 1];
+//            System.out.println(pack01(f, cost,weight,m,sum));
+            int[][] f = new int[cost.length][m + 1];
+            System.out.println(pack011(f, cost,weight,m));
+            List<Integer> result = Lists.newArrayList();
+            print011(f, cost, weight, cost.length - 1, m, result);
+            for(Integer choose : result){
+                System.out.print(choose + ",");
+            }
+
         }
     }
 
@@ -38,8 +46,7 @@ public class Poj3624 {
      * @param sum       所有花费总和
      * @return          最大价值
      */
-    private static int pack01(int[] cost,int[] weight, int v, int sum){
-        int[] f = new int[v + 1];
+    private static int pack01(int[] f, int[] cost,int[] weight, int v, int sum){
         for (int i = 1; i < cost.length; i++) {
             for (int j = v; j >= Math.max(v - sum, cost[i]); j--) {
                 f[j] = Math.max(f[j], f[j - cost[i]] + weight[i]);
@@ -56,8 +63,7 @@ public class Poj3624 {
      * @param v
      * @return
      */
-    private static int pack011(int[] cost, int[] weight, int v){
-        int[][] f = new int[cost.length][v + 1];
+    private static int pack011(int[][] f, int[] cost, int[] weight, int v){
         for(int i = 1; i < cost.length; i++){
             for(int j = v; j >= 0; j--){
                 if(j >= cost[i]) {
@@ -66,11 +72,6 @@ public class Poj3624 {
                     f[i][j] = f[i - 1][j];
                 }
             }
-        }
-        List<Integer> result = Lists.newArrayList();
-        print011(f, cost, weight, cost.length - 1, v, result);
-        for(Integer choose : result){
-            System.out.print(choose + ",");
         }
         return f[cost.length - 1][v];
     }

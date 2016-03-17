@@ -1,7 +1,5 @@
 package net.xiuc.lib;
 
-import com.google.common.collect.Lists;
-
 import java.util.List;
 
 /**
@@ -11,14 +9,16 @@ import java.util.List;
 public class Pack01 {
     /**
      * 01背包,cost和weight都需要开大一位数组,都是从1开始计数的
-     * @param cost      花费
-     * @param weight    价值
-     * @param v         总容量
-     * @param sum       所有花费总和
-     * @return          最大价值
+     *
+     * @param f      一维状态数组,多开大一位
+     * @param cost   花费,多开大一位,从1开始
+     * @param weight 价值
+     * @param v      总容量
+     * @param sum    所有花费总和
+     *
+     * @return 最大价值
      */
-    private static int pack01(int[] cost,int[] weight, int v, int sum){
-        int[] f = new int[v + 1];
+    private static int pack01(int[] f, int[] cost, int[] weight, int v, int sum) {
         for (int i = 1; i < cost.length; i++) {
             for (int j = v; j >= Math.max(v - sum, cost[i]); j--) {
                 f[j] = Math.max(f[j], f[j - cost[i]] + weight[i]);
@@ -28,30 +28,37 @@ public class Pack01 {
         return f[v];
     }
 
-    private static int pack011(int[] cost, int[] weight, int v, int sum){
-        int[][] f = new int[cost.length][v + 1];
-        for(int i = 1; i < cost.length; i++){
-            for(int j = v; j >= Math.max(f[i][j],f[i - 1][j - cost[i]] + weight[i]); j--){
-                f[i][j] = Math.max(f[i][j], f[i - 1][j - cost[i]] + weight[i]);
+    /**
+     * 二维数组存储状态
+     *
+     * @param f      二维数组存储状态,多开大一位
+     * @param cost   费用,多开大一位,从1开始
+     * @param weight 价值
+     * @param v      总容量
+     *
+     * @return 最大价值
+     */
+    private static int pack011(int[][] f, int[] cost, int[] weight, int v) {
+        for (int i = 1; i < cost.length; i++) {
+            for (int j = v; j >= 0; j--) {
+                if (j >= cost[i]) {
+                    f[i][j] = Math.max(f[i - 1][j], f[i - 1][j - cost[i]] + weight[i]);
+                } else {
+                    f[i][j] = f[i - 1][j];
+                }
             }
-            sum -= cost[i];
-        }
-        List<Integer> result = Lists.newArrayList();
-        print011(f, cost, weight, cost.length - 1, v, result);
-        for(Integer choose : result){
-            System.out.print(choose + ",");
         }
         return f[cost.length - 1][v];
     }
 
-    private static void print011(int[][] f, int[] cost, int[] weight, int i, int j, List<Integer> result){
-        if(i < 1 || j < cost[i]){
+    private static void print011(int[][] f, int[] cost, int[] weight, int i, int j, List<Integer> result) {
+        if (i < 1) {
             return;
         }
-        if(f[i][j] == f[i - 1][j - cost[i]] + weight[i]){
+        if (j >= cost[i] && f[i][j] == f[i - 1][j - cost[i]] + weight[i]) {
             result.add(i);
             print011(f, cost, weight, i - 1, j - cost[i], result);
-        }else {
+        } else {
             print011(f, cost, weight, i - 1, j, result);
         }
     }
