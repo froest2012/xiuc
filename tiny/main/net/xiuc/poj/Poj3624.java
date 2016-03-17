@@ -26,7 +26,7 @@ public class Poj3624 {
                 sum += cost[i];
             }
 //            System.out.println(pack01(cost,weight,m,sum));
-            System.out.println(pack011(cost,weight,m,sum));
+            System.out.println(pack011(cost,weight,m));
         }
     }
 
@@ -49,14 +49,23 @@ public class Poj3624 {
         return f[v];
     }
 
-    //TODO
-    private static int pack011(int[] cost, int[] weight, int v, int sum){
+    /**
+     * 二维数组存储状态,主要用于计算选择物品
+     * @param cost
+     * @param weight
+     * @param v
+     * @return
+     */
+    private static int pack011(int[] cost, int[] weight, int v){
         int[][] f = new int[cost.length][v + 1];
         for(int i = 1; i < cost.length; i++){
-            for(int j = v; j >= Math.max(cost[i], v - sum); j--){
-                f[i][j] = Math.max(f[i - 1][j], f[i - 1][j - cost[i]] + weight[i]);
+            for(int j = v; j >= 0; j--){
+                if(j >= cost[i]) {
+                    f[i][j] = Math.max(f[i - 1][j], f[i - 1][j - cost[i]] + weight[i]);
+                }else{
+                    f[i][j] = f[i - 1][j];
+                }
             }
-            sum -= cost[i];
         }
         List<Integer> result = Lists.newArrayList();
         print011(f, cost, weight, cost.length - 1, v, result);
@@ -67,10 +76,10 @@ public class Poj3624 {
     }
 
     private static void print011(int[][] f, int[] cost, int[] weight, int i, int j, List<Integer> result){
-        if(i < 1 || j < cost[i]){
+        if(i < 1){
             return;
         }
-        if(f[i][j] == f[i - 1][j - cost[i]] + weight[i]){
+        if(j >= cost[i] && f[i][j] == f[i - 1][j - cost[i]] + weight[i]){
             result.add(i);
             print011(f, cost, weight, i - 1, j - cost[i], result);
         }else {
