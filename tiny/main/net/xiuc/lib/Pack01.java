@@ -1,5 +1,8 @@
 package net.xiuc.lib;
 
+import com.google.common.collect.Lists;
+
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -61,5 +64,37 @@ public class Pack01 {
         } else {
             print011(f, cost, weight, i - 1, j, result);
         }
+    }
+
+    /**
+     * 完全背包二进制解法
+     *
+     * @param cost      费用数组
+     * @param weight    价值数组
+     * @param v         背包容量
+     * @return          最大价值
+     */
+    private static int completePackbinary(int[] cost, int[] weight, int v){
+        List<Integer> realCost = Lists.newArrayList();
+        List<Integer> realWeight = Lists.newArrayList();
+        for(int i = 1; i < cost.length; i++){
+            int sum = cost[i], k = 1;
+            while (sum <= v){
+                realCost.add(cost[i] * k);
+                realWeight.add(weight[i] * k);
+                k *= 2;
+                sum += cost[i] * k;
+            }
+        }
+        realCost.add(0, 0);
+        realWeight.add(0, 0);
+        int[] costArray = new int[realCost.size()];
+        int[] weightArray = new int[realWeight.size()];
+        for(int i = 0; i < realCost.size(); i++){
+            costArray[i] = realCost.get(i);
+            weightArray[i] = realWeight.get(i);
+        }
+        int[][] f = new int[costArray.length][v + 1];
+        return pack011(f, costArray, weightArray, v);
     }
 }
