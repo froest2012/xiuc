@@ -18,7 +18,21 @@ public abstract class Handler {
     }
 
     public final void handleMessage(IWomen women){
-
+        if(this.level == women.getType()){
+            response(women);
+        }else {
+            if(this.nextHandler != null) {
+                this.nextHandler.handleMessage(women);
+            }else {
+                System.out.println("------------------------");
+                System.out.println("没地方请示了..");
+            }
+        }
     }
 
+    public abstract void response(IWomen women);
+
+    public void setNextHandler(Handler nextHandler) {
+        this.nextHandler = nextHandler;
+    }
 }

@@ -6,7 +6,9 @@ package net.xiuc.design.command.example;
 public class Women implements IWomen {
 
     /**
-     *
+     * 1. 未出嫁
+     * 2. 出嫁
+     * 3. 寡妇
      */
     private int type;
 
@@ -16,7 +18,16 @@ public class Women implements IWomen {
         this.type = type;
         switch (this.type){
             case 1 : {
-                this.request = ""
+                this.request = "女儿的请求是:" + request;
+                break;
+            }
+            case 2 : {
+                this.request = "妻子的请求是:" + request;
+                break;
+            }
+            case 3 : {
+                this.request = "母亲的请求是:" + request;
+                break;
             }
         }
     }
