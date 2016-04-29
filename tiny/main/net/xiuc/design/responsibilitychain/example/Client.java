@@ -1,4 +1,4 @@
-package net.xiuc.design.command.example;
+package net.xiuc.design.responsibilitychain.example;
 
 import com.google.common.collect.Lists;
 

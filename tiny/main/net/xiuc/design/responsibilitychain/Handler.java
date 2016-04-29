@@ -1,4 +1,4 @@
-package net.xiuc.design.responsibilityhain;
+package net.xiuc.design.responsibilitychain;
 
 /**
  * Created by 秀川 on 16/4/5.

@@ -1,4 +1,4 @@
-package net.xiuc.design.command.example;
+package net.xiuc.design.responsibilitychain.example;
 
 /**
  * Created by 秀川 on 16/4/25.
