@@ -7,9 +7,13 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
+import org.elasticsearch.action.admin.indices.exists.types.TypesExistsRequestBuilder;
+import org.elasticsearch.action.admin.indices.exists.types.TypesExistsResponse;
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
+import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsRequestBuilder;
+import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequestBuilder;
@@ -38,7 +42,7 @@ public class IndicesTest {
 
     private static final IndicesAdminClient indicesAdminClient = ESClient.getInstance().getIndicesAdminClient();
 
-    public void createIndicesExample(){
+    public void createIndicesExample() {
         CreateIndexRequestBuilder createIndexRequestBuilder = indicesAdminClient.prepareCreate("es_index");
         Settings settings = Settings.builder()
                 .put("number_of_shards", "1")
@@ -51,7 +55,7 @@ public class IndicesTest {
             xContentBuilder = XContentFactory.jsonBuilder()
                     .startObject()
                     .startObject("es_index_type")//索引类型
-                    .field("dynamic_date_formats", new String[] {"yyyy-MM-dd HH:mm:ss.S", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd"})
+                    .field("dynamic_date_formats", new String[]{"yyyy-MM-dd HH:mm:ss.S", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd"})
                     .startObject("properties")
 
                     .startObject("search_field")
@@ -71,7 +75,7 @@ public class IndicesTest {
         createIndexRequestBuilder.get();
     }
 
-    public void deleteIndicesExample(){
+    public void deleteIndicesExample() {
 //        DeleteIndexRequest deleteIndexRequest = Requests.deleteIndexRequest("es_index");
 //        indicesAdminClient.delete(deleteIndexRequest);
         DeleteIndexRequestBuilder deleteIndexRequestBuilder = indicesAdminClient.prepareDelete("es_index");
@@ -134,6 +138,7 @@ public class IndicesTest {
         putMappingRequestBuilder.get();
     }
 
+    @SuppressWarnings("unchecked")
     public void getIndicesMappingExample() throws IOException {
         GetMappingsRequestBuilder getMappingsRequestBuilder = indicesAdminClient.prepareGetMappings("es_index");
         GetMappingsResponse getMappingsResponse = getMappingsRequestBuilder.get();
@@ -146,18 +151,37 @@ public class IndicesTest {
         System.out.println(fieldValues.get("analyzer"));
     }
 
-    public void getIndicesSettingsExample(){
+    @SuppressWarnings("unchecked")
+    public void getIndicesFieldMappingExample() {
+        GetFieldMappingsRequestBuilder getFieldMappingsRequestBuilder = indicesAdminClient.prepareGetFieldMappings("es_index");
+        getFieldMappingsRequestBuilder.setFields("search_*");
+        GetFieldMappingsResponse getFieldMappingsResponse = getFieldMappingsRequestBuilder.get();
+        GetFieldMappingsResponse.FieldMappingMetaData fieldMappingMetaData = getFieldMappingsResponse.fieldMappings("es_index", "es_index_type", "search_field");
+        Map<String, Object> fielMetaMap = (Map<String, Object>) fieldMappingMetaData.sourceAsMap().get("search_field");
+        System.out.println(fielMetaMap.get("analyzer"));
+    }
+
+    public void typeExistExample() {
+        TypesExistsRequestBuilder typesExistsRequestBuilder = indicesAdminClient.prepareTypesExists("es_index");
+        TypesExistsResponse typesExistsResponse = typesExistsRequestBuilder.setTypes("es_index_type3").get();
+        System.out.println(typesExistsResponse.isExists());
+        typesExistsResponse = typesExistsRequestBuilder.setTypes("es_index_type1").get();
+        System.out.println(typesExistsResponse.isExists());
+    }
+
+    public void getIndicesSettingsExample() {
         GetSettingsRequestBuilder getSettingsRequestBuilder = indicesAdminClient.prepareGetSettings("es_index");
         GetSettingsResponse getSettingsResponse = getSettingsRequestBuilder.get();
         //获取es_index索引中的number_of_shards的settings的值
-        String numOfShards = getSettingsResponse.getSetting("es_index","index.number_of_shards");
+        String numOfShards = getSettingsResponse.getSetting("es_index", "index.number_of_shards");
         System.out.println(numOfShards);
     }
 
     public void indicesExist() {
         IndicesExistsRequestBuilder indicesExistsRequestBuilder = indicesAdminClient.prepareExists("es_index");
         IndicesExistsResponse indicesExistsResponse = indicesExistsRequestBuilder.get();
-        System.out.println(indicesExistsResponse.isExists());;
+        System.out.println(indicesExistsResponse.isExists());
+        ;
     }
 
     public void closeIndicesExist() {
@@ -173,13 +197,21 @@ public class IndicesTest {
     }
 
     public void addAliasExample() {
+        //可以创建过滤别名, 可以使用这个功能来做数据分片
         IndicesAliasesRequestBuilder indicesAliasesRequestBuilder = indicesAdminClient.prepareAliases();
         indicesAliasesRequestBuilder.addAlias("es_index", "es_index_alias");
         indicesAliasesRequestBuilder.addAlias("es_index", "es_index_alias2");
         indicesAliasesRequestBuilder.get();
     }
 
-    public void deleteAliasExample(){
+    public void renameAliasExample(){
+        IndicesAliasesRequestBuilder indicesAliasesRequestBuilder = indicesAdminClient.prepareAliases();
+        indicesAliasesRequestBuilder.removeAlias("es_index", "es_index_alias");
+        indicesAliasesRequestBuilder.addAlias("es_index", "es_index_alias3");
+        indicesAliasesRequestBuilder.get();//这是一个原子操作
+    }
+
+    public void deleteAliasExample() {
         IndicesAliasesRequestBuilder indicesAliasesRequestBuilder = indicesAdminClient.prepareAliases();
         indicesAliasesRequestBuilder.removeAlias("es_index", "es_index_alias2");
         indicesAliasesRequestBuilder.get();
@@ -189,14 +221,17 @@ public class IndicesTest {
         IndicesTest indicesTest = new IndicesTest();
 //        indicesTest.createIndicesExample();//创建测试索引
 //        indicesTest.deleteIndicesExample();//删除索引
-//        indicesTest.addAliasExample();//设置别名
-//        indicesTest.deleteAliasExample();//删除别名
+        indicesTest.addAliasExample();//设置别名
+        indicesTest.deleteAliasExample();//删除别名
+        indicesTest.renameAliasExample();//修改别名
 //        indicesTest.getIndicesExample();//获取索引的所有信息
 //        indicesTest.getIndicesMappingExample();//获取指定索引的mapping
 //        indicesTest.getIndicesSettingsExample();//获取指定索引的setting
 //        indicesTest.indicesExist();//判断索引是否存在
 //        indicesTest.closeIndicesExist();//关闭索引,搜索关闭以后就不可以被搜索
 //        indicesTest.openIndicesExist();//打开索引
-        indicesTest.putMappingExample();//1. 添加type以及对于的mapping;2. 添加字段
+//        indicesTest.putMappingExample();//1. 添加type以及对于的mapping;2. 添加字段
+//        indicesTest.getIndicesFieldMappingExample();//获取索引中的字段的mapping信息,而不需要获取完整的mapping
+//        indicesTest.typeExistExample();//检查索引中是否有这个type
     }
 }
