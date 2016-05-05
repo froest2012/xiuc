@@ -197,7 +197,7 @@ public class IndicesTest {
     }
 
     public void addAliasExample() {
-        //可以创建过滤别名, 可以使用这个功能来做数据分片
+        //可以创建过滤别名, 可以使用这个功能来做数据分片, 如果查询的时候url中也有routing参数, 那么es会忽略掉别名中的routing参数
         IndicesAliasesRequestBuilder indicesAliasesRequestBuilder = indicesAdminClient.prepareAliases();
         indicesAliasesRequestBuilder.addAlias("es_index", "es_index_alias");
         indicesAliasesRequestBuilder.addAlias("es_index", "es_index_alias2");
