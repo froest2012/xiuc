@@ -217,6 +217,10 @@ public class IndicesTest {
         indicesAliasesRequestBuilder.get();
     }
 
+    public void refreshExample() {
+
+    }
+
     public static void main(String[] args) throws IOException {
         IndicesTest indicesTest = new IndicesTest();
 //        indicesTest.createIndicesExample();//创建测试索引
