@@ -15,15 +15,16 @@ public class RocketMqTest {
 
     public static void main(String[] args) {
         DefaultMQProducer producer = new DefaultMQProducer("producer_group");
-        producer.setNamesrvAddr("10.0.1.187:9876");
+        producer.setNamesrvAddr("10.0.1.107:9876");
         try{
             producer.start();
 //            producer.createTopic("order1","test", 1);
-            for (int i = 0; i < 1000; i++) {
-                Message message = new Message("test", "test1", "order1", "我是测试人员".getBytes());
+//            for (int i = 0; i < 1000; i++) {
+//                Message message = new Message("test", "test"+i, "order"+i, ("我是测试人员"+i).getBytes());
+                Message message = new Message("test", "test993", "order993", ("我是测试人员"+993).getBytes());
                 SendResult result = producer.send(message);
                 System.out.println("messageId : " + result.getMsgId() + ", 发送状态 :" + result.getSendStatus());
-            }
+//            }
         } catch (MQClientException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
