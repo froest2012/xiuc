@@ -135,7 +135,7 @@ public class SearchPolyphoneUtil {
         }
     }
 
-    private static boolean isPolyphone(String str) {
+    public static boolean isPolyphone(String str) {
         if (str == null) {
             return false;
         }
