@@ -28,8 +28,8 @@ public class SearchPolyphoneUtil {
     public static void main(String[] args) {
         //遍历pinyin_data数据文件,去除商品名称中的规格型号,把商品名称中不包含规格型号字符串第一个子串的商品保存到other_data,其他的保存到set
         //把set中的商品信息保存到dest_data
-//        readFromFile(SearchPolyphoneUtil.SOURCEPATH);
-        readFromFile2(SOURCEPATH2);
+        readFromFile(SearchPolyphoneUtil.SOURCEPATH);
+//        readFromFile2(SOURCEPATH);
     }
 
     private static void readFromFile2(String path) {
@@ -118,8 +118,8 @@ public class SearchPolyphoneUtil {
                 str += " " + convertToSpell(str) + "";
                 result.add(str);
             }
-            fileUtil.writeStrToFile(sb.toString(), OTHERPATH, false);
-            fileUtil.writeToFile(result, DESTPATH, false);
+//            fileUtil.writeStrToFile(sb.toString(), OTHERPATH, false);
+            fileUtil.writeToFile(result, "/Users/xiuc/Documents/management/搜索/dest_data4", false);
         } catch (FileNotFoundException e) {
             logger.error("read file error:", e);
         } catch (IOException e) {
@@ -233,6 +233,10 @@ public class SearchPolyphoneUtil {
                     String pinyin = pinyinArr[0];
                     //首字母大写
                     pinyin = String.valueOf(pinyin.charAt(0)).toLowerCase() + pinyin.substring(1, pinyin.length());
+                    char c = pinyin.charAt(pinyin.length() - 1);
+                    if(!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))){
+                        pinyin = pinyin.substring(0, pinyin.length() - 1);
+                    }
                     if (i > 0) {
                         pinyinName.append(",");
                     }
